@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>メモ編集:<%= h(@title) %>% </title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <form action="/memos/<%= @id %>/edit" method="post">
+    <div class="header">
+      <h2>メモ編集画面</h2>
+    </div>
+    <dl>
+      <dt>
+        <label for="title">Title</label>
+      </dt>
+      <dd>
+        <input type="text" id="title" name="title" class="form_title" value="<%= h(@title) %>">
+      </dd>
+      <dt>
+        <label for="content">Memo</label>
+      </dt>
+      <dd>
+        <textarea id="content" name="content" class="form_text"><%= h(@content) %></textarea>
+      </dd>
+    </dl>
+    <div class="button">
+      <input type="hidden" name="_method" value="PATCH">
+      <input class="button" type="submit" value="変更を保存する">
+    </div>
+  </form>
+    <div class="link">
+      <a href="/memos">トップに戻る</a>
+    </div>
+</body>
+</html>
