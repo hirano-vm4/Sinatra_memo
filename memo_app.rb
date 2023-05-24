@@ -12,6 +12,16 @@ helpers do
   def h(text)
     Rack::Utils.escape_html(text)
   end
+
+  def convert_to_hash(file_path)
+    File.open(file_path) { |file| JSON.parse(file.read) }
+  end
+
+  def format_to_instance_variable(file)
+    @title = file['title']
+    @content = file['content']
+    @id = file['id']
+  end
 end
 
 get '/' do
@@ -36,19 +46,15 @@ end
 
 get '/memos/:id' do
   file_path = get_file_path(params[:id])
-  memo = File.open(file_path) { |file| JSON.parse(file.read) }
-  @title = memo['title']
-  @content = memo['content']
-  @id = memo['id']
+  memo = convert_to_hash(file_path)
+  format_to_instance_variable(memo)
   erb :detail
 end
 
 get '/memos/:id/edit' do
   file_path = get_file_path(params[:id])
-  memo = File.open(file_path) { |file| JSON.parse(file.read) }
-  @title = memo['title']
-  @content = memo['content']
-  @id = memo['id']
+  memo = convert_to_hash(file_path)
+  format_to_instance_variable(memo)
   erb :edit
 end
 
