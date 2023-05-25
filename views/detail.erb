@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <mata charset="utf-8">
+  <link rel="stylesheet" href="/style.css">
+  <title>メモ詳細：<%= h(@title) %></title>
+</head>
+  <body>
+    <div class="header">
+      <h2>メモ詳細</h2>
+    </div>
+    <div class="memo_title">
+      <h2><span class="detail_title"><%= h(@title) %></span></h2>
+    </div>
+    <div class="memo_content">
+      <%= h(@content) %>
+    </div>
+    <div class="link">
+      <a href="/memos/<%= @id %>/edit">編集</a>
+    </div>
+    <form method="post" action="<%= @id %>" class="form_button">
+      <input type="hidden" name="_method" value="DELETE">
+      <input type="submit" value="削除する" class="button">
+    </form>
+    <div class="link">
+      <a href="/memos">TOPに戻る</a>
+    </div>
+  </body>
+</html>

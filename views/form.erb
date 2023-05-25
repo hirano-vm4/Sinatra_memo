@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>メモ入力フォーム</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <form action="/memos" method="post">
+    <div class="header">
+      <h2 class="top_header">メモ登録画面</h2>
+    </div>
+    <dl>
+      <dt>
+        <label for="title">Title</label>
+      </dt>
+      <dd>
+        <input type="text" id="title" name="title" class="form_title" placeholder="メモのタイトルを入力">
+      </dd>
+      <dt>
+        <label for="content">Memo</label>
+      </dt>
+      <dd>
+        <textarea id="content" name="content" class="form_text" placeholder="メモの内容を入力してください"></textarea>
+      </dd>
+    </dl>
+    <div class="button">
+      <input class="button" type="submit" value="メモを保存する">
+    </div>
+  </form>
+    <div class="link">
+      <a href="/memos">トップに戻る</a>
+    </div>
+</body>
+</html>
