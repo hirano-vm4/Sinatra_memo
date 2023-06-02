@@ -7,27 +7,49 @@ Sinatraを使った簡単なメモアプリです。「メモ一覧の表示」�
 ### 1.任意のディレクトリにリポジトリのクローンを保存する
 
 ```
-git clone https://github.com/hirano-vm4/Sinatra_memo
+$ git clone https://github.com/hirano-vm4/Sinatra_memo
 ```
 
 ### 2.リポジトリに移動します
 
 ```
-cd Sinatra_memo
+$ cd Sinatra_memo
 ```
 
 ### 3.必要なGemをインストールします
 
 ```
-bundle install
+$ bundle install
+```
+# ローカル環境にメモ保存用のデータベースを作成する
+
+### 1.PostgreSQLの任意のユーザーにログインする
+```
+$ psql -U ユーザー名
 ```
 
-### 4.アプリを起動します
+### 2.`memo`という名前のデータベースを作成する
+```
+ユーザー名=# CREATE DATABASE memo;
+```
+
+### 3.`memo`データベースにアクセスし、テーブルを作成する
+```
+CREATE TABLE memos
+(id  serial NOT NULL,
+title text NOT NULL,
+content text NOT NULL,
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+PRIMARY KEY (id)); 
+```
+
+# アプリを実行する
+
+### 1.アプリを起動します
 
 ```
-ruby memo_app.rb
+$ ruby memo_app.rb
 ```
-
-### 5.ブラウザで表示する
+### 2.ブラウザで表示する
 
 ブラウザで`http://localhost:4567`にアクセスして表示を確認する
