@@ -4,12 +4,12 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'pg'
 
-class Memo
+class MemoApp
   def initialize
-    @connection = PG.connect(dbname: 'memo')
+    @connection = PG.connect(dbname: 'simple_memo')
   end
 
-  def sort_memos
+  def sort
     @connection.exec('SELECT * FROM memos ORDER BY created_at DESC')
   end
 
@@ -17,7 +17,7 @@ class Memo
     @connection.exec('INSERT INTO memos (title, content) VALUES ($1, $2);', [title, content])
   end
 
-  def find_a_memo(id)
+  def find(id)
     @connection.exec('SELECT * FROM memos WHERE id = $1', [id]).first
   end
 
@@ -42,14 +42,14 @@ helpers do
   end
 end
 
-memo = Memo.new
+memo = MemoApp.new
 
 get '/' do
   redirect to('/memos')
 end
 
 get '/memos' do
-  @memos = memo.sort_memos
+  @memos = memo.sort
   erb :top
 end
 
@@ -63,13 +63,13 @@ post '/memos' do
 end
 
 get '/memos/:id' do
-  memo_data = memo.find_a_memo(params[:id])
+  memo_data = memo.find(params[:id])
   format_to_instance_variable(memo_data)
   erb :detail
 end
 
 get '/memos/:id/edit' do
-  edit_file = memo.find_a_memo(params[:id])
+  edit_file = memo.find(params[:id])
   format_to_instance_variable(edit_file)
   erb :edit
 end

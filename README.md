@@ -28,12 +28,12 @@ $ bundle install
 $ psql -U ユーザー名
 ```
 
-### 2.`memo`という名前のデータベースを作成する
+### 2.`simple_memo`という名前のデータベースを作成する
 ```
-ユーザー名=# CREATE DATABASE memo;
+ユーザー名=# CREATE DATABASE simple_memo;
 ```
 
-### 3.`memo`データベースにアクセスし、テーブルを作成する
+### 3.`simple_memo`データベースにアクセスし、テーブルを作成する
 ```
 CREATE TABLE memos
 (id  serial NOT NULL,
