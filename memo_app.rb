@@ -2,35 +2,54 @@
 
 require 'sinatra'
 require 'sinatra/reloader'
-require 'json'
+require 'pg'
 
-helpers do
-  def get_file_path(id)
-    "data/memo_#{id}.json"
+class MemoApp
+  def initialize
+    @connection = PG.connect(dbname: 'simple_memo')
   end
 
+  def sort
+    @connection.exec('SELECT * FROM memos ORDER BY created_at DESC')
+  end
+
+  def create(title, content)
+    @connection.exec('INSERT INTO memos (title, content) VALUES ($1, $2);', [title, content])
+  end
+
+  def find(id)
+    @connection.exec('SELECT * FROM memos WHERE id = $1', [id]).first
+  end
+
+  def edit(title, content, id)
+    @connection.exec('UPDATE memos SET title = $1, content = $2 WHERE id = $3', [title, content, id])
+  end
+
+  def delete(id)
+    @connection.exec('DELETE FROM memos WHERE id = $1', [id])
+  end
+end
+
+helpers do
   def h(text)
     Rack::Utils.escape_html(text)
   end
 
-  def convert_to_hash(file_path)
-    File.open(file_path) { |file| JSON.parse(file.read) }
-  end
-
   def format_to_instance_variable(file)
+    @id = file['id']
     @title = file['title']
     @content = file['content']
-    @id = file['id']
   end
 end
+
+memo = MemoApp.new
 
 get '/' do
   redirect to('/memos')
 end
 
 get '/memos' do
-  memos = Dir.glob('data/*').map { |file| JSON.parse(File.open(file).read) }
-  @memos = memos.sort_by { |file| file['time'] }.reverse
+  @memos = memo.sort
   erb :top
 end
 
@@ -39,36 +58,28 @@ get '/memos/new' do
 end
 
 post '/memos' do
-  memo_data = { 'id' => SecureRandom.uuid, 'title' => params[:title], 'content' => params[:content], 'time' => Time.now }
-  File.open("data/memo_#{memo_data['id']}.json", 'w') { |file| JSON.dump(memo_data, file) }
-  redirect to("/memos/#{memo_data['id']}")
+  memo.create(params[:title], params[:content])
+  redirect to('/memos')
 end
 
 get '/memos/:id' do
-  file_path = get_file_path(params[:id])
-  memo = convert_to_hash(file_path)
-  format_to_instance_variable(memo)
+  memo_data = memo.find(params[:id])
+  format_to_instance_variable(memo_data)
   erb :detail
 end
 
 get '/memos/:id/edit' do
-  file_path = get_file_path(params[:id])
-  memo = convert_to_hash(file_path)
-  format_to_instance_variable(memo)
+  edit_file = memo.find(params[:id])
+  format_to_instance_variable(edit_file)
   erb :edit
 end
 
 patch '/memos/:id/edit' do
-  file_path = get_file_path(params[:id])
-  File.open(file_path, 'w') do |file|
-    memo = { 'id' => params[:id], 'title' => params[:title], 'content' => params[:content], 'time' => Time.now }
-    JSON.dump(memo, file)
-  end
+  memo.edit(params[:title], params[:content], params[:id])
   redirect to("/memos/#{params[:id]}")
 end
 
 delete '/memos/:id' do
-  file_path = get_file_path(params[:id])
-  File.delete(file_path)
+  memo.delete(params[:id])
   redirect to('/memos')
 end
